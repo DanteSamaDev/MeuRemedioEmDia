@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
 
 import { useTema } from '../context/TemaContext';
 import { CardMedicamento, HeaderTela } from '../components';
-import { Medicamento } from '../types';
+import { useMedicamentos } from '../hooks/useMedicamentos';
 
 const { height } = Dimensions.get('window');
 
@@ -27,8 +24,15 @@ interface FiltroMedicamentos {
 
 export function TelaMedicamentos(): React.JSX.Element {
   const { cores } = useTema();
-  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
-  const [carregando, setCarregando] = useState(true);
+  const {
+    medicamentos,
+    loading,
+    error,
+    marcarComoTomado,
+    filtrarMedicamentos,
+    calcularResumoDia
+  } = useMedicamentos();
+
   const [filtros, setFiltros] = useState<FiltroMedicamentos>({
     todos: true,
     tomados: false,
@@ -36,61 +40,11 @@ export function TelaMedicamentos(): React.JSX.Element {
     estoqueBaixo: false,
   });
 
-  // Carregar medicamentos
-  const carregarMedicamentos = useCallback(async () => {
-    try {
-      setCarregando(true);
-      const dados = await AsyncStorage.getItem(
-        '@meu_remedio_em_dia/medicamentos'
-      );
-      if (dados) {
-        setMedicamentos(JSON.parse(dados));
-      }
-    } catch (erro) {
-      console.error('Erro ao carregar medicamentos:', erro);
-    } finally {
-      setCarregando(false);
-    }
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      carregarMedicamentos();
-    }, [carregarMedicamentos])
-  );
-
-  // Marcar medicamento como tomado
-  const handleMarcarTomado = useCallback(async (id: string, tomado: boolean) => {
-    try {
-      const novosmed = medicamentos.map((med) =>
-        med.id === id ? { ...med, tomado } : med
-      );
-      setMedicamentos(novosmed);
-      await AsyncStorage.setItem(
-        '@meu_remedio_em_dia/medicamentos',
-        JSON.stringify(novosmed)
-      );
-    } catch (erro) {
-      console.error('Erro ao marcar medicamento:', erro);
-    }
-  }, [medicamentos]);
-
-  // Filtrar medicamentos
-  const medicamentosFiltrados = medicamentos.filter((med) => {
-    if (filtros.todos) return true;
-    if (filtros.tomados && med.tomado) return true;
-    if (filtros.naoTomados && !med.tomado) return true;
-    if (filtros.estoqueBaixo && med.estoque <= med.quantidade * 0.2) return true;
-    return false;
-  });
+  // Aplicar filtros aos medicamentos
+  const medicamentosFiltrados = filtrarMedicamentos(filtros);
 
   // Calcular resumo
-  const resumo = {
-    total: medicamentos.length,
-    tomados: medicamentos.filter((m) => m.tomado).length,
-    estoqueBaixo: medicamentos.filter((m) => m.estoque <= m.quantidade * 0.2)
-      .length,
-  };
+  const resumo = calcularResumoDia();
 
   const handleFiltro = (filtro: keyof FiltroMedicamentos) => {
     if (filtro === 'todos') {
@@ -105,6 +59,28 @@ export function TelaMedicamentos(): React.JSX.Element {
     }
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: cores.fundo }]}>
+        <HeaderTela titulo="Medicamentos" subtitulo="Carregando..." />
+        <View style={styles.carregando}>
+          <Text style={{ color: cores.texto }}>Carregando medicamentos...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: cores.fundo }]}>
+        <HeaderTela titulo="Medicamentos" subtitulo="Erro" />
+        <View style={styles.carregando}>
+          <Text style={{ color: cores.erro }}>{error}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: cores.fundo }]}
@@ -118,174 +94,150 @@ export function TelaMedicamentos(): React.JSX.Element {
         }}
       />
 
-      {carregando ? (
-        <View style={styles.carregando}>
-          <ActivityIndicator size="large" color={cores.primaria} />
+      {/* Resumo Cards */}
+      <View
+        style={[
+          styles.resumoContainer,
+          { backgroundColor: cores.superficiePrimaria },
+        ]}
+      >
+        <View style={styles.resumoCard}>
+          <Text style={[styles.resumoNumero, { color: cores.primaria }]}>
+            {resumo.tomados}
+          </Text>
+          <Text style={[styles.resumoLabel, { color: cores.textoSecundario }]}>
+            Tomados
+          </Text>
         </View>
-      ) : (
-        <>
-          {/* Resumo Cards */}
-          <View
+        <View style={styles.divisor} />
+        <View style={styles.resumoCard}>
+          <Text
             style={[
-              styles.resumoContainer,
-              { backgroundColor: cores.superficiePrimaria },
+              styles.resumoNumero,
+              { color: cores.aviso },
             ]}
           >
-            <View style={styles.resumoCard}>
-              <Text style={[styles.resumoNumero, { color: cores.primaria }]}>
-                {resumo.tomados}
-              </Text>
-              <Text style={[styles.resumoLabel, { color: cores.textoSecundario }]}>
-                Tomados
-              </Text>
-            </View>
-            <View style={styles.divisor} />
-            <View style={styles.resumoCard}>
-              <Text
-                style={[
-                  styles.resumoNumero,
-                  { color: cores.aviso },
-                ]}
-              >
-                {resumo.estoqueBaixo}
-              </Text>
-              <Text style={[styles.resumoLabel, { color: cores.textoSecundario }]}>
-                Estoque Baixo
-              </Text>
-            </View>
-            <View style={styles.divisor} />
-            <View style={styles.resumoCard}>
-              <Text style={[styles.resumoNumero, { color: cores.sucesso }]}>
-                {resumo.total}
-              </Text>
-              <Text style={[styles.resumoLabel, { color: cores.textoSecundario }]}>
-                Total
-              </Text>
-            </View>
+            {medicamentos.filter((m) => m.estoque <= m.quantidade * 0.2).length}
+          </Text>
+          <Text style={[styles.resumoLabel, { color: cores.textoSecundario }]}>
+            Estoque Baixo
+          </Text>
+        </View>
+      </View>
+
+      {/* Filtros */}
+      <View style={styles.filtrosContainer}>
+        <TouchableOpacity
+          style={[
+            styles.filtroBotao,
+            {
+              backgroundColor: filtros.todos ? cores.primaria : cores.fundo2,
+            },
+          ]}
+          onPress={() => handleFiltro('todos')}
+        >
+          <Text
+            style={[
+              styles.filtroTexto,
+              {
+                color: filtros.todos ? '#fff' : cores.texto,
+                fontWeight: filtros.todos ? '700' : '500',
+              },
+            ]}
+          >
+            Todos
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filtroBotao,
+            {
+              backgroundColor: filtros.tomados ? cores.primaria : cores.fundo2,
+            },
+          ]}
+          onPress={() => handleFiltro('tomados')}
+        >
+          <Text
+            style={[
+              styles.filtroTexto,
+              {
+                color: filtros.tomados ? '#fff' : cores.texto,
+                fontWeight: filtros.tomados ? '700' : '500',
+              },
+            ]}
+          >
+            Tomados
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filtroBotao,
+            {
+              backgroundColor: filtros.naoTomados ? cores.primaria : cores.fundo2,
+            },
+          ]}
+          onPress={() => handleFiltro('naoTomados')}
+        >
+          <Text
+            style={[
+              styles.filtroTexto,
+              {
+                color: filtros.naoTomados ? '#fff' : cores.texto,
+                fontWeight: filtros.naoTomados ? '700' : '500',
+              },
+            ]}
+          >
+            Pendentes
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.filtroBotao,
+            {
+              backgroundColor: filtros.estoqueBaixo ? cores.primaria : cores.fundo2,
+            },
+          ]}
+          onPress={() => handleFiltro('estoqueBaixo')}
+        >
+          <Text
+            style={[
+              styles.filtroTexto,
+              {
+                color: filtros.estoqueBaixo ? '#fff' : cores.texto,
+                fontWeight: filtros.estoqueBaixo ? '700' : '500',
+              },
+            ]}
+          >
+            Estoque Baixo
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Lista de Medicamentos */}
+      <FlatList
+        data={medicamentosFiltrados}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <CardMedicamento
+            medicamento={item}
+            onMarcarTomado={() => marcarComoTomado(item.id)}
+          />
+        )}
+        contentContainerStyle={styles.listaContainer}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.vazioContainer}>
+            <Text style={[styles.vazioTexto, { color: cores.textoSecundario }]}>
+              {filtros.todos
+                ? 'Nenhum medicamento cadastrado'
+                : 'Nenhum medicamento encontrado com este filtro'}
+            </Text>
           </View>
-
-          {/* Filtros */}
-          <View style={styles.filtrosContainer}>
-            <TouchableOpacity
-              style={[
-                styles.filtro,
-                {
-                  backgroundColor: filtros.todos ? cores.primaria : cores.fundo2,
-                  borderColor: cores.primaria,
-                },
-              ]}
-              onPress={() => handleFiltro('todos')}
-            >
-              <Text
-                style={[
-                  styles.filtroTexto,
-                  {
-                    color: filtros.todos ? '#fff' : cores.texto,
-                    fontWeight: filtros.todos ? '700' : '500',
-                  },
-                ]}
-              >
-                Todos
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.filtro,
-                {
-                  backgroundColor: filtros.tomados ? cores.sucesso : cores.fundo2,
-                  borderColor: cores.sucesso,
-                },
-              ]}
-              onPress={() => handleFiltro('tomados')}
-            >
-              <Text
-                style={[
-                  styles.filtroTexto,
-                  {
-                    color: filtros.tomados ? '#fff' : cores.texto,
-                    fontWeight: filtros.tomados ? '700' : '500',
-                  },
-                ]}
-              >
-                Tomados ✓
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.filtro,
-                {
-                  backgroundColor: filtros.naoTomados ? cores.erro : cores.fundo2,
-                  borderColor: cores.erro,
-                },
-              ]}
-              onPress={() => handleFiltro('naoTomados')}
-            >
-              <Text
-                style={[
-                  styles.filtroTexto,
-                  {
-                    color: filtros.naoTomados ? '#fff' : cores.texto,
-                    fontWeight: filtros.naoTomados ? '700' : '500',
-                  },
-                ]}
-              >
-                Pendentes
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.filtro,
-                {
-                  backgroundColor: filtros.estoqueBaixo
-                    ? cores.aviso
-                    : cores.fundo2,
-                  borderColor: cores.aviso,
-                },
-              ]}
-              onPress={() => handleFiltro('estoqueBaixo')}
-            >
-              <Text
-                style={[
-                  styles.filtroTexto,
-                  {
-                    color: filtros.estoqueBaixo ? '#fff' : cores.texto,
-                    fontWeight: filtros.estoqueBaixo ? '700' : '500',
-                  },
-                ]}
-              >
-                Estoque ⚠️
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Lista de Medicamentos */}
-          {medicamentosFiltrados.length > 0 ? (
-            <FlatList
-              data={medicamentosFiltrados}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <CardMedicamento
-                  medicamento={item}
-                  onMarcarTomado={handleMarcarTomado}
-                />
-              )}
-              contentContainerStyle={styles.lista}
-              scrollEnabled={height > 600}
-            />
-          ) : (
-            <View style={styles.vazio}>
-              <Text style={[styles.vazioTexto, { color: cores.textoSecundario }]}>
-                {medicamentos.length === 0
-                  ? 'Nenhum medicamento cadastrado'
-                  : 'Nenhum medicamento encontrado com este filtro'}
-              </Text>
-            </View>
-          )}
-        </>
-      )}
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -301,55 +253,60 @@ const styles = StyleSheet.create({
   },
   resumoContainer: {
     flexDirection: 'row',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    gap: 0,
+    margin: 16,
+    padding: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   resumoCard: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 12,
-  },
-  divisor: {
-    width: 1,
-    backgroundColor: '#e0e0e0',
   },
   resumoNumero: {
     fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 4,
+    fontWeight: 'bold',
   },
   resumoLabel: {
-    fontSize: 11,
-    fontWeight: '500',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  divisor: {
+    width: 1,
+    backgroundColor: '#ddd',
+    marginHorizontal: 16,
   },
   filtrosContainer: {
     flexDirection: 'row',
-    paddingVertical: 8,
     paddingHorizontal: 16,
-    gap: 8,
+    marginBottom: 8,
   },
-  filtro: {
-    paddingVertical: 6,
+  filtroBotao: {
+    flex: 1,
+    paddingVertical: 8,
     paddingHorizontal: 12,
+    marginHorizontal: 4,
     borderRadius: 20,
-    borderWidth: 1.5,
+    alignItems: 'center',
   },
   filtroTexto: {
     fontSize: 12,
   },
-  lista: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  listaContainer: {
+    padding: 16,
+    paddingTop: 0,
   },
-  vazio: {
+  vazioContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: height * 0.2,
   },
   vazioTexto: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

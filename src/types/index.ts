@@ -76,6 +76,23 @@ export interface FarmaciaConveniada {
 }
 
 /**
+ * Interface para farmácia (dados externos)
+ */
+export interface Farmacia {
+  id: string;
+  nome: string;
+  endereco: string;
+  telefone: string;
+  tipo: 'privada' | 'governamental' | 'popular';
+  programas: string[];
+  horario: string;
+  coordenadas?: {
+    latitude: number;
+    longitude: number;
+  };
+}
+
+/**
  * Interface para resumo diário
  */
 export interface ResumoDia {

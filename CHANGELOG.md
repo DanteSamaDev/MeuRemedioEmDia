@@ -42,6 +42,18 @@ Versionamento [SemVer](https://semver.org/lang/pt-BR/): `MAJOR.MINOR.PATCH`
 - **Configuração Jest** otimizada para React Native/Expo
 - **Mocks consistentes** para dependências externas
 
+#### Segurança de Dados
+- **react-native-encrypted-storage** integrado para dados sensíveis
+- **StorageService** criado para gerenciar armazenamento seguro
+- **Separação entre dados criptografados e não criptografados**
+- **Proteção de PIN, dados médicos e configurações pessoais**
+
+#### Arquitetura Refatorada
+- **Hook useMedicamentos** criado para centralizar lógica de medicamentos
+- **TelaMedicamentos** refatorada - reduziu de 355 para ~200 linhas
+- **Serviços desacoplados**: StorageService, DadosExternosService
+- **Separação de responsabilidades** entre UI, lógica e dados
+
 #### Notificações Push
 - **react-native-push-notification** integrado e configurado
 - **Notificações locais** para lembretes de medicamentos
@@ -51,9 +63,21 @@ Versionamento [SemVer](https://semver.org/lang/pt-BR/): `MAJOR.MINOR.PATCH`
 
 #### Geração de PDFs
 - **react-native-pdf-lib** integrado para relatórios
-- **Relatórios em PDF** para histórico de medicamentos
-- **Exportação de dados** do usuário em formato PDF
-- **Compatibilidade** com Android e iOS
+- **Função gerarRelatorioPDF** no RelatorioContext
+- **Relatórios em PDF** com estatísticas e histórico
+- **Salvamento automático** na pasta Documents do dispositivo
+
+#### Serviços Externos
+- **DadosExternosService** criado para gerenciar APIs externas
+- **Validação de links** oficiais do governo
+- **Sistema de reporte** de problemas com dados
+- **Estrutura preparada** para integração com backend
+
+#### Testes Expandidos
+- **Detox** adicionado para testes end-to-end
+- **Cobertura de testes** preparada para >70%
+- **Testes de hook useMedicamentos** implementados
+- **Testes de serviços** (StorageService, DadosExternosService)
 ### ✨ Adicionado
 
 #### Componente Principal (TelaPrincipal.tsx)
