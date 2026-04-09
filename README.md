@@ -3,10 +3,322 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Code style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)]()
+[![Health Tech](https://img.shields.io/badge/Tech-HealthTech-blue)]()
 
-Aplicativo React Native focado em **adesão ao tratamento medicamentoso**, **orientação de direitos em saúde** e **acesso rápido** a canais de urgência e farmácias conveniadas.
+**Plataforma móvel que empoderia pacientes com ferramentas inteligentes de autocuidado, orientação clara sobre direitos em saúde e acesso rápido a recursos de urgência, medicamentos e informações.**
 
-> **🎯 Missão:** Empoderar pacientes com ferramentas de autocuidado e informações de saúde, respeitando privacidade e direitos fundamentais.
+> **🎯 Missão:** Reduzir a não-aderência ao tratamento medicamentoso e garantir que pacientes conheçam seus direitos de acesso a saúde pública de qualidade, cirurgias gratuitas e medicamentos sem custo.
+
+---
+
+## 🏥 Visão Geral da Plataforma
+
+O **Meu Remédio em Dia** é uma plataforma **GRATUITA, PRIVADA e SEGURA** desenvolvida para pacientes brasileiros que precisam:
+
+✅ **Monitorar medicamentos** com lembretes inteligentes por período (manhã, tarde, noite)
+✅ **Acompanhar estoque** e receber alertas antes de faltar remédio
+✅ **Conhecer direitos** garantidos pela Constituição Federal e leis de saúde
+✅ **Acessar medicamentos gratuitos** pelo SUS e programas governamentais
+✅ **Buscar cirurgias e procedimentos** disponibilizados publicamente
+✅ **Solicitar apoio jurídico** para garantir acesso a saúde (via Defensoria Pública)
+✅ **Encontrar farmácias** com preços acessíveis, genéricos e programas de desconto
+✅ **Marcar emergências** com acesso rápido a SAMU, Disque Saúde e atendimentos urgentes
+
+---
+
+## 💻 Stack Técnica
+
+| Tecnologia | Versão | Propósito |
+|-----------|--------|----------|
+| **React Native** | >= 0.73 | Framework mobile cross-platform (Android e iOS) |
+| **Expo** | >= 50.0 | Build, deploy e testagem |
+| **React** | >= 18.2 | UI components |
+| **TypeScript** | >= 5.3 | Type safety |
+| **AsyncStorage** | >= 1.21 | Persistência local em dispositivo |
+| **Prettier** | - | Formatação consistente |
+| **Jest** | >= 29.7 | Testes unitários |
+
+---
+
+## 📋 Pré-requisitos
+
+- **Node.js** >= 18.0 (recomendado v20+)
+- **npm** >= 9.0 ou **yarn** >= 3.6
+- **Git** para versionamento
+- (Opcional) **Android Studio** para emulador/device Android
+- (Opcional) **Xcode** para emulador/device iOS (macOS apenas)
+
+---
+
+## ⚙️ Instalação Rápida
+
+### 1. Clonar repositório
+
+```bash
+git clone https://github.com/DanteSamaDev/MeuRemedioEmDia.git
+cd MeuRemedioEmDia
+```
+
+### 2. Instalar dependências
+
+```bash
+npm install --legacy-peer-deps
+```
+
+> **Por quê `--legacy-peer-deps`?** Alguns pacotes de teste têm conflitos de versão que resolvemos com este flag.
+
+### 3. Type-check e testes
+
+```bash
+npm run type-check
+npm test
+```
+
+---
+
+## 🚀 Como Rodar em Desenvolvimento
+
+### Web (via Expo)
+```bash
+npm run web
+```
+
+### Android (emulador ou device)
+```bash
+npm run android
+```
+
+### iOS (emulador ou device, macOS apenas)
+```bash
+npm run ios
+```
+
+### Iniciar Metro CLI (React Native)
+```bash
+npm start
+```
+
+---
+
+## 📱 Funcionalidades Principais
+
+### 1️⃣ **Gestão de Medicamentos**
+- ✅ Registre todos os medicamentos com dosagem, horário e período
+- ✅ Marque doses tomadas com progresso visual
+- ✅ Controle inteligente de estoque com cálculo de dias restantes
+- ✅ Alertas de baixo estoque (push notifications em desenvolvimento)
+- ✅ Notas por medicamento (modo de preparo, efeitos colaterais, etc.)
+
+### 2️⃣ **Portal Educativo de Direitos em Saúde**
+Conteúdo verificado e atualizado sobre:
+
+- 📋 **SUS e Medicamentos Gratuitos**
+  - Como acessar medicamentos pelo SUS
+  - Identificar medicamentos genéricos e mais baratos
+  - Programa Farmácia Popular
+  - Farmácias de manipulação com desconto
+
+- ⚖️ **Direitos Judiciais**
+  - Quando a negativa de medicamento é ilegal
+  - Como pedir ajuda à Defensoria Pública (GRÁTIS)
+  - Ações judiciais para garantir acesso
+  - Liminar e tutela de urgência (decisão rápida)
+
+- 🏥 **Cirurgias e Procedimentos Públicos**
+  - Como solicitar cirurgias pelo SUS
+  - Filas de espera e prioridades
+  - Alternativas e instituições filantrópicas
+
+- 💰 **Isenções e Benefícios**
+  - Isenção de ICMS para medicamentos
+  - Programas estaduais de subsídio
+  - Descontos para aposentados e deficientes
+
+### 3️⃣ **Ações Rápidas de Emergência**
+Botões de contato direto com:
+- **SAMU** (192) para ambulância
+- **Bombeiros** (193) para resgate
+- **Disque Saúde** (136) para orientações
+- **Defensoria Pública** (links por estado)
+- **Portais Oficiais** (Anvisa, SUS, etc.)
+
+### 4️⃣ **Busca de Farmácias Conveniadas**
+- Farmácias com app e delivery
+- Programas de genéricos 
+- Medicamentos SUS gratuitos
+- Farmácias de manipulação
+- Filtro por região disponibilidade
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+MeuRemedioEmDia/
+├── TelaPrincipal.tsx              # Componente React principal
+├── package.json                   # Dependências e scripts npm
+├── tsconfig.json                  # Configuração TypeScript
+├── .editorconfig                  # Config do editor (indentação, etc.)
+├── .prettierrc.json               # Config de formatação Prettier
+├── .gitignore                     # Arquivos ignorados pelo Git
+├── LICENSE                        # MIT License
+├── README.md                      # Este arquivo
+├── CHANGELOG.md                   # Histórico de versões
+├── CONTRIBUTING.md                # Guia para contribuidores
+├── CODE_OF_CONDUCT.md             # Código de conduta da comunidade
+├── SECURITY.md                    # Política de segurança e LGPD
+└── .github/
+    ├── ISSUE_TEMPLATE/
+    │   ├── bug_report.md          # Template para reportar bugs
+    │   └── feature_request.md     # Template para sugerir features
+    └── PULL_REQUEST_TEMPLATE.md   # Template para pull requests
+```
+
+---
+
+## 🗺️ Roadmap de Desenvolvimento
+
+### 🟢 **Fase 1: MVP Local (Atual - Em Discussão)**
+- [x] Tela principal com 4 abas funcionais
+- [x] Gestão completa de medicamentos
+- [x] Portal educativo com 7 temas de direitos
+- [x] Ações rápidas com links úteis
+- [x] Busca de farmácias conveniadas
+- [x] Persistência 100% local com AsyncStorage
+- [ ] Testes unitários completos
+- [ ] Lint e type-check automáticos
+
+### 🟡 **Fase 2: Aplicação Mobile Completa**
+- [ ] Navigação com React Navigation
+- [ ] Home com resumo do dia
+- [ ] Notificações push para horários de medicamentos
+- [ ] Temas claro/escuro
+- [ ] Autenticação local (PIN/Biometria)
+- [ ] Relatórios em PDF dos medicamentos
+- [ ] Build e publicação no Android Play Store
+
+### 🟠 **Fase 3: Backend Opcional (LGPD-Compliant)**
+- [ ] Login seguro com OAuth2
+- [ ] Sincronização na nuvem (com consentimento explícito)
+- [ ] Backup criptografado de dados
+- [ ] Relatórios para médicos (compartilhamento opcional)
+- [ ] Dashboard de adesão ao tratamento
+
+### 🔵 **Fase 4: Integrações Estratégicas**
+- [ ] API com dados oficiais SUS
+- [ ] Integração com apps de farmácias (Drogasil, DragonShop, etc.)
+- [ ] Sincronização com smartwatches (WearOS, Apple Watch)
+- [ ] Build e publicação iOS
+
+---
+
+## 🔐 Segurança e Privacidade
+
+### Princípios Fundamentais
+
+1. **Privacy by Design**
+   - Todos os dados são salvos **localmente no dispositivo**
+   - NENHUM dado pessoal ou médico é enviado para servidor por padrão
+   - Você controla 100% de seus dados
+
+2. **LGPD Compliance (Lei Geral de Proteção de Dados)**
+   - Conformidade com legislação brasileira
+   - Consentimento explícito para qualquer coleta/compartilhamento
+   - Direito de acesso, exclusão e portabilidade dos dados
+   - Notificação de vazamento em até 72h
+
+3. **Transparência Total**
+   - Código aberto no GitHub (você pode auditar)
+   - Sem trackers, analytics ou publicidades
+   - Sem venda de dados a terceiros
+
+4. **Criptografia Futura**
+   - Dados sensíveis podem ser emcriptados localmente
+   - Sincronização na nuvem só com dados criptografados
+
+### Dados Coletados
+
+- **Localmente no Dispositivo**: Medicamentos, horários, estoque, progresso
+- **Enviado para Servidor**: Nada por padrão
+- **Opcional e Consentido**: Analytics anônimo apenas se usuário autorizar
+
+### Como Reportar Vulnerabilidades
+
+Veja [`SECURITY.md`](./SECURITY.md) para processo confidencial.
+
+---
+
+## 🤝 Como Contribuir
+
+Adoramos contribuições que melhoram a vida de pacientes! 🎉
+
+### Processo de Contribuição
+
+1. **Faça um Fork** do projeto
+2. **Crie uma branch** descritiva:
+   ```bash
+   git checkout -b feat/novo-direito-saude
+   # ou
+   git checkout -b fix/erro-estoque-critico
+   ```
+3. **Comit suas mudanças** com mensagem clara:
+   ```bash
+   git commit -m "feat: adicionar informações sobre medicamentos psiquiátricos SUS"
+   ```
+4. **Faça Push** para sua branch:
+   ```bash
+   git push origin feat/novo-direito-saude
+   ```
+5. **Abra um Pull Request** descrevendo seu trabalho
+
+### Diretrizes Importantes
+
+📖 **Leia primeiro:**
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) - Fluxo de contribuição
+- [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) - Código de conduta
+
+✅ **Seu PR deve ter:**
+- Mensagem de commit descritiva
+- Código limpo e bem tipado (TypeScript)
+- Testes (quando aplicável)
+- Atualização do README se necessário
+- Nenhum segredo/credencial commitado
+
+🎯 **Focos principais:**
+- **Acessibilidade**: Fonte legível, botões grandes, bom contraste (público idoso)
+- **Clareza**: Linguagem simples sobre temas complexos de saúde
+- **Segurança**: Nunca adicione dados reais, nenhuma credencial
+- **Qualidade**: Type-safe, sem `any`, bem testado
+
+---
+
+## 📄 Licença
+
+Este projeto está sob licença **MIT** - totalmente grátis e open source.
+Veja [`LICENSE`](./LICENSE) para detalhes.
+
+---
+
+## 📞 Suporte e Contato
+
+- **Issues no GitHub**: [Abra uma issue](https://github.com/DanteSamaDev/MeuRemedioEmDia/issues)
+- **Discussões**: [GitHub Discussions](https://github.com/DanteSamaDev/MeuRemedioEmDia/discussions)
+- **Segurança**: Reporte em [`SECURITY.md`](./SECURITY.md)
+- **Ideias**: Crie uma Issue com tag `enhancement`
+
+---
+
+## 🙏 Agradecimentos
+
+Construído com ❤️ e paixão para garantir que **pacientes brasileiros tenham acesso equitativo a saúde**.
+
+Especial agradecimento aos **profissionais de saúde, advogados do SUS e ativistas de direitos do paciente** que nos informaram sobre as maiores dificuldades enfrentadas.
+
+---
+
+**Vamos juntos melhorar a vida de milhões de pacientes! 💪**
+
+**Made with ❤️ by [DanteSamaDev](https://github.com/DanteSamaDev) e comunidade**
 
 ---
 
