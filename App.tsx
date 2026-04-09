@@ -13,6 +13,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { TemaProvider, useTema } from './src/context/TemaContext';
 import { AutenticacaoProvider, useAutenticacao } from './src/context/AutenticacaoContext';
 import { MedicamentosProvider } from './src/context/MedicamentosContext';
+import { NotificacoesProvider } from './src/context/NotificacoesContext';
+import { RelatorioProvider } from './src/context/RelatorioContext';
+import { DireitosProvider } from './src/context/DireitosContext';
 
 // Telas
 import { TelaHome } from './src/screens/TelaHome';
@@ -155,7 +158,13 @@ export default function App() {
       <TemaProvider>
         <AutenticacaoProvider>
           <MedicamentosProvider>
-            <AppContent />
+            <NotificacoesProvider>
+              <RelatorioProvider>
+                <DireitosProvider>
+                  <AppContent />
+                </DireitosProvider>
+              </RelatorioProvider>
+            </NotificacoesProvider>
           </MedicamentosProvider>
         </AutenticacaoProvider>
       </TemaProvider>
