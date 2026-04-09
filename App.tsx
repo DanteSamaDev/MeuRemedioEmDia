@@ -16,6 +16,10 @@ import { AutenticacaoProvider, useAutenticacao } from './src/context/Autenticaca
 // Telas
 import { TelaHome } from './src/screens/TelaHome';
 import { TelaPIN } from './src/screens/TelaPIN';
+import { TelaMedicamentos } from './src/screens/TelaMedicamentos';
+import { TelaDireitos } from './src/screens/TelaDireitos';
+import { TelaUrgencia } from './src/screens/TelaUrgencia';
+import { TelaFarmacias } from './src/screens/TelaFarmacias';
 
 // Tipos de Navegação
 import { RootStackParamList, AppStackParamList, BottomTabParamList } from './src/navigation/types';
@@ -60,7 +64,7 @@ const BottomTabNavigator = () => {
 
       <BottomTab.Screen
         name="MedicamentosTab"
-        component={TelaHome} // Será substituído
+        component={TelaMedicamentos}
         options={{
           title: 'Medicamentos',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>💊</Text>,
@@ -69,7 +73,7 @@ const BottomTabNavigator = () => {
 
       <BottomTab.Screen
         name="DireitosTab"
-        component={TelaHome} // Será substituído
+        component={TelaDireitos}
         options={{
           title: 'Direitos',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>⚖️</Text>,
@@ -78,7 +82,7 @@ const BottomTabNavigator = () => {
 
       <BottomTab.Screen
         name="UrgenciaTab"
-        component={TelaHome} // Será substituído
+        component={TelaUrgencia}
         options={{
           title: 'Urgência',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🚨</Text>,
@@ -87,7 +91,7 @@ const BottomTabNavigator = () => {
 
       <BottomTab.Screen
         name="FarmaciasTab"
-        component={TelaHome} // Será substituído
+        component={TelaFarmacias}
         options={{
           title: 'Farmácias',
           tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏪</Text>,

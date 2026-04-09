@@ -24,9 +24,9 @@ export interface Medicamento {
   tomado: boolean;
   dataTomado?: string; // Data da última tomada
   observacao?: string;
-  estoqueAtual: number;
-  estoqueMinimo: number;
-  consumoPorDose: number;
+  estoque: number; // Quantidade atual
+  quantidade: number; // Quantidade total
+  consumoPorDose?: number;
   ativo: boolean; // Se o medicamento está ativo
 }
 
@@ -64,10 +64,15 @@ export interface FarmaciaConveniada {
   regiao: string;
   temEntrega: boolean;
   temApp: boolean;
+  temAtendimentoTelefone?: boolean;
   telefone?: string;
-  url?: string;
-  observacao: string;
-  tipo?: 'publica' | 'privada' | 'manipulacao'; // Tipo de farmácia
+  appUrl?: string;
+  horario?: string;
+  temMedicamentoGenerico?: boolean;
+  temMedicamentoManipulado?: boolean;
+  temDesconto?: boolean;
+  descricao?: string;
+  classificacao?: number; // 1-5 stars
 }
 
 /**
