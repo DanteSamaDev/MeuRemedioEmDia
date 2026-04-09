@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -28,7 +29,7 @@ import { TelaFarmacias } from './src/screens/TelaFarmacias';
 // Tipos de Navegação
 import { RootStackParamList, AppStackParamList, BottomTabParamList } from './src/navigation/types';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator<RootStackParamList>();
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 /**
@@ -171,6 +172,3 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
-
-// Import para Text (necessário para emoji icons)
-import { Text } from 'react-native';

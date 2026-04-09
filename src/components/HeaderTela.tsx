@@ -44,7 +44,7 @@ export function HeaderTela({
       ]}
     >
       <StatusBar
-        barStyle={tema === 'claro' ? 'dark-content' : 'light-content'}
+        barStyle={tema === 'light' ? 'dark-content' : 'light-content'}
         backgroundColor={cores.superficiePrimaria}
       />
       <SafeAreaView style={styles.safeArea}>

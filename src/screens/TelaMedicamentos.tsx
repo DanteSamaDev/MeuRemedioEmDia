@@ -98,7 +98,9 @@ export function TelaMedicamentos(): React.JSX.Element {
     } else {
       setFiltros({
         todos: false,
-        [filtro]: !filtros[filtro],
+        tomados: filtro === 'tomados' ? !filtros.tomados : false,
+        naoTomados: filtro === 'naoTomados' ? !filtros.naoTomados : false,
+        estoqueBaixo: filtro === 'estoqueBaixo' ? !filtros.estoqueBaixo : false,
       });
     }
   };

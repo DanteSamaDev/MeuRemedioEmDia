@@ -30,7 +30,7 @@ export function NotificacoesProvider({
   // Inicializar push notifications
   useEffect(() => {
     PushNotification.configure({
-      onNotification(notification) {
+      onNotification(notification: any) {
         console.log('Notificação recebida:', notification);
       },
       popInitialNotification: true,
