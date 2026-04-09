@@ -1,5 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
+  Alert,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -40,7 +42,9 @@ interface AcaoRapida {
   url?: string;
 }
 
-const medicamentosIniciais: Medicamento[] = [
+const STORAGE_MEDICAMENTOS = '@meu_remedio_em_dia/medicamentos/v1';
+
+const medicamentosBase: Medicamento[] = [
   {
     id: '1',
     nome: 'Losartana',
@@ -101,37 +105,37 @@ const direitosIniciais: Direito[] = [
   },
   {
     id: 'd2',
-    titulo: 'Quando o remédio não é fornecido',
+    titulo: 'Negativa de fornecimento de medicamento',
     descricao:
-      'Se houver negativa, é possível pedir revisão administrativa e, em casos urgentes, buscar Defensoria Pública.',
+      'Se houver negativa, você pode buscar revisão administrativa e apoio da Defensoria Pública.',
     passos: [
       'Solicite a negativa por escrito.',
       'Guarde exames, receita e relatório médico detalhado.',
-      'Procure Defensoria Pública para avaliar ação judicial.',
+      'Procure a Defensoria Pública do seu estado para orientação jurídica.',
     ],
     categoria: 'judicial',
   },
   {
     id: 'd3',
-    titulo: 'Pedido judicial para cirurgia/operação de urgência',
+    titulo: 'Pedido judicial para cirurgia de urgência',
     descricao:
-      'Em situações de risco, seu advogado/defensor pode pedir liminar para garantir cirurgia com prioridade.',
+      'Em situações graves, um defensor/advogado pode pedir liminar para acelerar cirurgia e tratamento.',
     passos: [
-      'Tenha relatório médico com indicação de urgência.',
+      'Tenha relatório médico com indicação de urgência e risco.',
       'Junte exames e histórico clínico recente.',
-      'Leve tudo à Defensoria ou advogado para pedido de liminar.',
+      'Leve a documentação para atendimento jurídico imediatamente.',
     ],
     categoria: 'judicial',
   },
   {
     id: 'd4',
-    titulo: 'Isenção de imposto para compra de alguns medicamentos e tratamentos',
+    titulo: 'Benefícios e isenções relacionadas à saúde',
     descricao:
-      'Alguns casos permitem benefícios fiscais e reembolso, conforme regras locais e situação clínica.',
+      'Existem benefícios fiscais e assistenciais em alguns casos. As regras variam por local e perfil.',
     passos: [
-      'Confira regras na Secretaria da Fazenda do seu estado.',
-      'Guarde notas fiscais e prescrições.',
-      'Procure orientação contábil/jurídica para cada benefício.',
+      'Verifique regras oficiais da sua cidade/estado.',
+      'Guarde notas fiscais, prescrições e laudos.',
+      'Busque orientação contábil ou jurídica para cada benefício.',
     ],
     categoria: 'isencao',
   },
@@ -141,26 +145,26 @@ const acoesRapidas: AcaoRapida[] = [
   {
     id: 'a1',
     titulo: 'SAMU',
-    descricao: 'Emergências médicas imediatas.',
+    descricao: 'Emergência médica imediata.',
     telefone: '192',
   },
   {
     id: 'a2',
-    titulo: 'Defensoria Pública',
-    descricao: 'Orientação jurídica gratuita para casos urgentes.',
-    url: 'https://www.defensoria.sp.def.br/',
-  },
-  {
-    id: 'a3',
     titulo: 'Disque Saúde',
     descricao: 'Informações oficiais sobre serviços do SUS.',
     telefone: '136',
   },
   {
-    id: 'a4',
+    id: 'a3',
     titulo: 'Conecte SUS',
-    descricao: 'Informações e serviços digitais de saúde.',
+    descricao: 'Portal digital de informações e serviços de saúde.',
     url: 'https://www.gov.br/saude/pt-br/assuntos/conecte-sus',
+  },
+  {
+    id: 'a4',
+    titulo: 'Defensoria Pública (mapa nacional)',
+    descricao: 'Encontrar a Defensoria Pública do seu estado.',
+    url: 'https://anadep.org.br/wtk/pagina/membros',
   },
 ];
 
@@ -179,7 +183,45 @@ const labelsPeriodo: Record<Periodo, { titulo: string; icone: string }> = {
 const TelaPrincipal: React.FC = () => {
   const [abaAtiva, setAbaAtiva] = useState<Aba>('medicamentos');
   const [buscaDireitos, setBuscaDireitos] = useState('');
-  const [medicamentos, setMedicamentos] = useState<Medicamento[]>(medicamentosIniciais);
+  const [carregando, setCarregando] = useState(true);
+  const [medicamentos, setMedicamentos] = useState<Medicamento[]>(medicamentosBase);
+
+  useEffect(() => {
+    const carregarMedicamentos = async (): Promise<void> => {
+      try {
+        const dadosSalvos = await AsyncStorage.getItem(STORAGE_MEDICAMENTOS);
+        if (dadosSalvos) {
+          const parsed = JSON.parse(dadosSalvos) as Medicamento[];
+          setMedicamentos(parsed);
+        }
+      } catch {
+        Alert.alert(
+          'Aviso',
+          'Não foi possível carregar os dados locais. O app continuará com dados padrão.',
+        );
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    void carregarMedicamentos();
+  }, []);
+
+  useEffect(() => {
+    if (carregando) {
+      return;
+    }
+
+    const persistirMedicamentos = async (): Promise<void> => {
+      try {
+        await AsyncStorage.setItem(STORAGE_MEDICAMENTOS, JSON.stringify(medicamentos));
+      } catch {
+        Alert.alert('Aviso', 'Não foi possível salvar os dados localmente.');
+      }
+    };
+
+    void persistirMedicamentos();
+  }, [carregando, medicamentos]);
 
   const obterDataAtual = (): string => {
     const hoje = new Date();
@@ -199,6 +241,19 @@ const TelaPrincipal: React.FC = () => {
         medicamento.id === id ? { ...medicamento, tomado: true } : medicamento,
       ),
     );
+  };
+
+  const iniciarNovoDia = (): void => {
+    Alert.alert('Iniciar novo dia', 'Deseja limpar as marcações de medicamentos tomados?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Limpar marcações',
+        style: 'destructive',
+        onPress: () => {
+          setMedicamentos((prev) => prev.map((medicamento) => ({ ...medicamento, tomado: false })));
+        },
+      },
+    ]);
   };
 
   const resumoDia = useMemo(() => {
@@ -233,9 +288,15 @@ const TelaPrincipal: React.FC = () => {
       return;
     }
 
-    const podeAbrir = await Linking.canOpenURL(destino);
-    if (podeAbrir) {
-      await Linking.openURL(destino);
+    try {
+      const podeAbrir = await Linking.canOpenURL(destino);
+      if (podeAbrir) {
+        await Linking.openURL(destino);
+      } else {
+        Alert.alert('Não foi possível abrir', 'Verifique se o seu aparelho suporta essa ação.');
+      }
+    } catch {
+      Alert.alert('Erro', 'Não foi possível abrir este recurso no momento.');
     }
   };
 
@@ -309,6 +370,15 @@ const TelaPrincipal: React.FC = () => {
           <View style={[styles.barraProgressoFill, { width: `${resumoDia.percentual}%` }]} />
         </View>
         <Text style={styles.porcentagemProgresso}>{resumoDia.percentual}% concluído</Text>
+
+        <TouchableOpacity
+          style={styles.botaoSecundario}
+          onPress={iniciarNovoDia}
+          accessibilityRole="button"
+          accessibilityLabel="Limpar marcações de remédios tomados"
+        >
+          <Text style={styles.textoBotaoSecundario}>Iniciar novo dia</Text>
+        </TouchableOpacity>
       </View>
 
       <SecaoPeriodo periodo="manha" />
@@ -378,7 +448,9 @@ const TelaPrincipal: React.FC = () => {
         <TouchableOpacity
           key={acao.id}
           style={styles.botaoAcaoRapida}
-          onPress={() => abrirAcaoRapida(acao)}
+          onPress={() => {
+            void abrirAcaoRapida(acao);
+          }}
           accessibilityRole="button"
           accessibilityLabel={`Abrir ${acao.titulo}`}
         >
@@ -394,6 +466,15 @@ const TelaPrincipal: React.FC = () => {
       ))}
     </View>
   );
+
+  if (carregando) {
+    return (
+      <SafeAreaView style={styles.containerCarregando}>
+        <StatusBar barStyle="dark-content" backgroundColor="#F3F6FB" />
+        <Text style={styles.textoCarregando}>Carregando seus dados...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -454,6 +535,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F3F6FB',
   },
+  containerCarregando: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F3F6FB',
+    padding: 20,
+  },
+  textoCarregando: {
+    fontSize: 20,
+    color: '#243B53',
+    textAlign: 'center',
+    lineHeight: 28,
+  },
   cabecalho: {
     backgroundColor: '#F3F6FB',
     paddingHorizontal: 20,
@@ -481,6 +575,7 @@ const styles = StyleSheet.create({
   },
   botaoAba: {
     flex: 1,
+    minHeight: 48,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
@@ -544,6 +639,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#243B53',
+  },
+  botaoSecundario: {
+    marginTop: 12,
+    minHeight: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#0B74DE',
+    borderRadius: 12,
+  },
+  textoBotaoSecundario: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#0B74DE',
   },
   secaoPeriodo: {
     marginBottom: 14,
@@ -611,6 +720,7 @@ const styles = StyleSheet.create({
     color: '#627D98',
   },
   botaoTomado: {
+    minHeight: 52,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
@@ -645,6 +755,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   inputBusca: {
+    minHeight: 48,
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#BCCCDC',
@@ -711,6 +822,7 @@ const styles = StyleSheet.create({
     borderColor: '#D9E2EF',
     padding: 12,
     marginBottom: 10,
+    minHeight: 64,
     backgroundColor: '#FFFFFF',
   },
   infoAcaoRapida: {
