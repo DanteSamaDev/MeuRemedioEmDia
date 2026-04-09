@@ -15,6 +15,7 @@ import { AutenticacaoProvider, useAutenticacao } from './src/context/Autenticaca
 
 // Telas
 import { TelaHome } from './src/screens/TelaHome';
+import { TelaPIN } from './src/screens/TelaPIN';
 
 // Tipos de Navegação
 import { RootStackParamList, AppStackParamList, BottomTabParamList } from './src/navigation/types';
@@ -114,7 +115,7 @@ const RootNavigator = () => {
         // Tela de Login/PIN
         <Stack.Screen
           name="Autenticacao"
-          component={TelaHome} // Será substituído por tela de PIN
+          component={TelaPIN}
           options={{ animationEnabled: false }}
         />
       ) : (
