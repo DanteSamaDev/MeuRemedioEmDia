@@ -7,8 +7,23 @@ Versionamento [SemVer](https://semver.org/lang/pt-BR/): `MAJOR.MINOR.PATCH`
 
 ---
 
-## [0.2.0] - 2026-04-09
+---
+
+## [0.3.0] - 2026-04-09
+
 ### ✨ Adicionado
+
+#### Configuração Expo
+- **app.json** criado com configuração completa do Expo
+- **eas.json** configurado para builds de desenvolvimento e produção
+- **Scripts de build** adicionados ao package.json
+- **Estrutura de assets** preparada com documentação
+
+#### CI/CD Automático
+- **GitHub Actions workflow** configurado para testes automáticos
+- **Pipeline completo**: lint, type-check, tests com cobertura
+- **Build automático** para Android e iOS em pushes para main
+- **Codecov integration** para relatórios de cobertura
 
 #### Testes Unitários
 - **Jest configurado** com preset React Native e TypeScript
@@ -20,6 +35,9 @@ Versionamento [SemVer](https://semver.org/lang/pt-BR/): `MAJOR.MINOR.PATCH`
 - **Cobertura básica** validando estrutura e imports
 
 #### Melhorias de Desenvolvimento
+- **Scripts npm expandidos**: build, submit, coverage
+- **Estrutura de assets** documentada
+- **Configuração EAS Build** preparada
 - **Estrutura de testes** preparada para expansão
 - **Configuração Jest** otimizada para React Native/Expo
 - **Mocks consistentes** para dependências externas
