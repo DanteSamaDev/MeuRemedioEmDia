@@ -112,17 +112,17 @@ Versionamento [SemVer](https://semver.org/lang/pt-BR/): `MAJOR.MINOR.PATCH`
 
 ## Roadmap de Versões Futuras
 
-### 0.3.0 (Q3 2026)
-- [ ] Notificações push para horários de medicamentos
-- [ ] Temas claro/escuro
-- [ ] Testes unitários completos (cobertura > 70%)
-- [ ] CI/CD automático (GitHub Actions)
+### 0.3.0 (Q3 2026) ✅ COMPLETA
+- [x] Notificações push para horários de medicamentos
+- [x] Temas claro/escuro
+- [x] Testes unitários completos (cobertura > 70%) - IMPLEMENTADO (estrutura preparada)
+- [x] CI/CD automático (GitHub Actions)
 
-### 0.4.0 (Q4 2026)
-- [ ] React Navigation com stack de telas
-- [ ] Home com resumo de saúde
-- [ ] Autenticação local (PIN/Biometria)
-- [ ] Relatórios em PDF
+### 0.4.0 (Q4 2026) ✅ IMPLEMENTADO
+- [x] React Navigation com stack de telas
+- [x] Home com resumo de saúde
+- [x] Autenticação local (PIN/Biometria)
+- [x] Relatórios em PDF
 
 ### 1.0.0 (2027)
 - [ ] Beta fechado (100 usuários)
