@@ -8,7 +8,21 @@ Versionamento [SemVer](https://semver.org/lang/pt-BR/): `MAJOR.MINOR.PATCH`
 ---
 
 ## [0.2.0] - 2026-04-09
+### ✨ Adicionado
 
+#### Testes Unitários
+- **Jest configurado** com preset React Native e TypeScript
+- **13 testes unitários** cobrindo contexts e componentes principais
+- **Testes de Context**: TemaContext, AutenticacaoContext, MedicamentosContext
+- **Testes de Componentes**: HeaderTela, CardMedicamento
+- **Configuração completa**: babel.config.js, jest.config.js, jest.setup.js
+- **Mocks implementados** para AsyncStorage e React Navigation
+- **Cobertura básica** validando estrutura e imports
+
+#### Melhorias de Desenvolvimento
+- **Estrutura de testes** preparada para expansão
+- **Configuração Jest** otimizada para React Native/Expo
+- **Mocks consistentes** para dependências externas
 ### ✨ Adicionado
 
 #### Componente Principal (TelaPrincipal.tsx)
