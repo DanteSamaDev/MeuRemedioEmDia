@@ -41,6 +41,19 @@ Versionamento [SemVer](https://semver.org/lang/pt-BR/): `MAJOR.MINOR.PATCH`
 - **Estrutura de testes** preparada para expansão
 - **Configuração Jest** otimizada para React Native/Expo
 - **Mocks consistentes** para dependências externas
+
+#### Notificações Push
+- **react-native-push-notification** integrado e configurado
+- **Notificações locais** para lembretes de medicamentos
+- **Configuração personalizável**: som, vibração, minutos antes
+- **Channel dedicado** para notificações do app
+- **Agendamento inteligente** baseado nos horários dos medicamentos
+
+#### Geração de PDFs
+- **react-native-pdf-lib** integrado para relatórios
+- **Relatórios em PDF** para histórico de medicamentos
+- **Exportação de dados** do usuário em formato PDF
+- **Compatibilidade** com Android e iOS
 ### ✨ Adicionado
 
 #### Componente Principal (TelaPrincipal.tsx)

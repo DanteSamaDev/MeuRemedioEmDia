@@ -95,6 +95,23 @@ export interface RelatorioAdesao {
   dosesEsperadas: number;
   percentualAderencia: number;
   medicamentosMonitorados: number;
+  // Campos adicionais para PDF
+  totalDoses?: number;
+  dosesTomadas?: number;
+  porcentagemAdesao?: number;
+  medicamentos?: Array<{
+    nome: string;
+    dosagem: string;
+    periodo: string;
+    horario: string;
+    porcentagemAdesao: number;
+    dosesTomadas: number;
+    totalDoses: number;
+    historicoDias: Array<{
+      dia: string;
+      tomado: boolean;
+    }>;
+  }>;
 }
 
 /**

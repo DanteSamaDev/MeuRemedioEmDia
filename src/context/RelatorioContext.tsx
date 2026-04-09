@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PDFLib, { PDFDocument, PDFPage } from 'react-native-pdf-lib';
 import { RelatorioAdesao, Medicamento } from '../types';
 
 interface RelatorioContextType {
@@ -8,6 +9,7 @@ interface RelatorioContextType {
   salvarDiarioMedicamentos: (medicamentos: Medicamento[]) => Promise<void>;
   obterHistorico: (periodo: string) => Promise<RelatorioAdesao | null>;
   limparRelatorios: () => Promise<void>;
+  gerarRelatorioPDF: (relatorio: RelatorioAdesao) => Promise<string | null>;
 }
 
 const RelatorioContext = createContext<RelatorioContextType | undefined>(undefined);
@@ -97,6 +99,11 @@ export function RelatorioProvider({
           medicamentosMonitorados: new Set(
             dadosPeriodo.flatMap((e) => e.medicamentos.map((m) => m.nome))
           ).size,
+          // Campos para PDF
+          totalDoses,
+          dosesTomadas,
+          porcentagemAdesao: percentual,
+          medicamentos: [], // Será preenchido se necessário
         };
 
         return relatorio;
@@ -131,12 +138,97 @@ export function RelatorioProvider({
     }
   }, []);
 
+  const gerarRelatorioPDF = useCallback(async (relatorio: RelatorioAdesao): Promise<string | null> => {
+    try {
+      // Criar uma nova página PDF
+      const page1 = PDFPage
+        .create()
+        .setMediaBox(200, 400)
+        .drawText('Relatório de Adesão - Meu Remédio em Dia', {
+          x: 5,
+          y: 380,
+          fontSize: 16,
+        })
+        .drawText(`Período: ${relatorio.periodo}`, {
+          x: 5,
+          y: 360,
+          fontSize: 12,
+        })
+        .drawText(`Total de Doses: ${relatorio.totalDoses || relatorio.dosesEsperadas}`, {
+          x: 5,
+          y: 340,
+          fontSize: 12,
+        })
+        .drawText(`Doses Tomadas: ${relatorio.dosesTomadas || relatorio.dosetomadas}`, {
+          x: 5,
+          y: 320,
+          fontSize: 12,
+        })
+        .drawText(`Adesão: ${relatorio.porcentagemAdesao || relatorio.percentualAderencia}%`, {
+          x: 5,
+          y: 300,
+          fontSize: 12,
+        })
+        .drawText(`Medicamentos Monitorados: ${relatorio.medicamentosMonitorados}`, {
+          x: 5,
+          y: 280,
+          fontSize: 12,
+        });
+
+      // Adicionar informações dos medicamentos se disponíveis
+      let yPosition = 260;
+      if (relatorio.medicamentos && relatorio.medicamentos.length > 0) {
+        page1.drawText('Medicamentos:', {
+          x: 5,
+          y: yPosition,
+          fontSize: 14,
+        });
+        yPosition -= 20;
+
+        relatorio.medicamentos.forEach((med, index) => {
+          if (yPosition > 50) { // Evitar escrever fora da página
+            page1.drawText(`${index + 1}. ${med.nome} (${med.dosagem}) - ${med.porcentagemAdesao}%`, {
+              x: 5,
+              y: yPosition,
+              fontSize: 10,
+            });
+            yPosition -= 15;
+          }
+        });
+      }
+
+      // Adicionar data de geração
+      page1.drawText(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, {
+        x: 5,
+        y: 30,
+        fontSize: 8,
+      });
+
+      // Criar o documento PDF
+      const docsDir = PDFLib.getDocumentsDirectory();
+      const pdfPath = `${docsDir}/relatorio_${Date.now()}.pdf`;
+
+      const pdfDoc = PDFDocument
+        .create(pdfPath)
+        .addPages([page1]);
+
+      // Salvar o PDF
+      const pdfBytes = await pdfDoc.write();
+
+      return pdfPath;
+    } catch (erro) {
+      console.error('Erro ao gerar PDF:', erro);
+      return null;
+    }
+  }, []);
+
   const value: RelatorioContextType = {
     relatorios,
     gerarRelatorioPeriodo,
     salvarDiarioMedicamentos,
     obterHistorico,
     limparRelatorios,
+    gerarRelatorioPDF,
   };
 
   return (
