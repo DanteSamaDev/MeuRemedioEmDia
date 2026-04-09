@@ -1,0 +1,32 @@
+# macOS / Linux
+.DS_Store
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependencies
+node_modules/
+
+# React Native / Metro
+.expo/
+.expo-shared/
+.metro-health-check*
+android/.gradle/
+android/app/build/
+ios/build/
+ios/Pods/
+
+# Build artifacts
+dist/
+build/
+coverage/
+
+# Environment
+.env
+.env.*
+!.env.example
