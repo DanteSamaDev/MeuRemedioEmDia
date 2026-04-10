@@ -2,6 +2,10 @@
   "name": "meu-remedio-em-dia",
   "version": "0.3.0-alpha",
   "description": "Plataforma de empoderamento de pacientes com gestão de medicamentos, direitos em saúde e acesso a recursos de urgência",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "main": "index.js",
   "scripts": {
     "android": "react-native run-android",
